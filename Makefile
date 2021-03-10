@@ -10,9 +10,9 @@ CC=pgcc
 #CFLAGS =  -Ofast -qopenmp -w3 -diag-disable:remark
 
 ifeq ($(CC),gcc)
-	CFLAGS = -O3 -fopenacc 
+	CFLAGS = -fopenacc 
 else
-	CFLAGS = -O3 -acc -fast  -ta=tesla:managed -Minfo=accel
+	CFLAGS = -acc -fast  -ta=tesla:managed -Minfo=accel
 endif
 LDLIBS=-lm
 
