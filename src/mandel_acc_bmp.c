@@ -288,8 +288,7 @@ int main(int argc, char *argv[])
 
     /* Calculate and draw points */
     #pragma acc parallel loop \
-        create(ks(0:X_RESN*Y_RESN), ds(0:X_RESN*Y_RESN)) \
-        copyout(ks(0:X_RESN*Y_RESN), ds(0:X_RESN*Y_RESN))
+        copyout(ks[0:X_RESN*Y_RESN], ds[0:X_RESN*Y_RESN])
     for (int it = 0; it < X_RESN*Y_RESN; it++)
     {
         int i = it / Y_RESN;
