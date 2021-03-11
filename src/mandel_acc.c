@@ -5,9 +5,12 @@
 #include <omp.h>
 #include <time.h>
 
-#define X_RESN 1000 /* x resolution */
-#define Y_RESN 1000 /* y resolution */
-#define MAX_ITER (2000)
+int X_RESN = 1000; /* x resolution */
+int Y_RESN = 1000; /* y resolution */
+int MAX_ITER = 200;
+
+
+
 
 // ref: Creating bitmap files from byets data: https://stackoverflow.com/a/47785639
 const int BYTES_PER_PIXEL = 3; /// red, green and blue
@@ -97,6 +100,9 @@ unsigned char* createBitmapInfoHeader (int height, int width)
     return infoHeader;
 }
 
+
+
+
 // ref: https://stackoverflow.com/questions/6749621/how-to-create-a-high-resolution-timer-in-linux-to-measure-program-performance
 // call this function to start a nanosecond-resolution timer
 struct timespec timer_start() {
@@ -106,16 +112,22 @@ struct timespec timer_start() {
 }
 
 // call this function to end a timer, returning nanoseconds elapsed as a long
-long timer_end(struct timespec start_time){
+long long timer_end(struct timespec start_time){
     struct timespec end_time;
     clock_gettime(CLOCK_MONOTONIC, &end_time);
-    long diffInNanos = (end_time.tv_sec - start_time.tv_sec) * (long)1e9 + (end_time.tv_nsec - start_time.tv_nsec);
+    long long diffInNanos = (end_time.tv_sec - start_time.tv_sec) * (long long)1e9 + (end_time.tv_nsec - start_time.tv_nsec);
     return diffInNanos;
 }
+
+
+
 
 typedef struct complextype {
     double real, imag;
 } Compl;
+
+
+
 
 // Color conversion functions
 // ref: https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
@@ -277,9 +289,35 @@ unsigned long _RGB(rgb c)
 
 int main(int argc, char *argv[])
 {
+    int save = 0;
+    int s = 0;
+    for (int itA = 1; itA < argc; itA++) {
+        char *arg = argv[itA];
+        if (s == 0) {
+            if (strcmp(arg, "-s") == 0) save = 1;
+            if (strcmp(arg, "-x") == 0) s = 1;
+            if (strcmp(arg, "-y") == 0) s = 2;
+            if (strcmp(arg, "-i") == 0) s = 3;
+            if (strcmp(arg, "-xy") == 0) s = 4;
+        }
+        else 
+        {
+            if (s == 1) X_RESN = atoi(arg);
+            if (s == 2) Y_RESN = atoi(arg);
+            if (s == 3) MAX_ITER = atoi(arg);
+            if (s == 4) X_RESN = Y_RESN = atoi(arg);
+            s = 0;
+        }
+    }
+    if (s != 0) {
+        fprintf(stderr, "Missing argument value!");
+        exit(1);
+    }
+    // printf("-s %d -x %d -y %d -i %d", save, X_RESN, Y_RESN, MAX_ITER);
+
     struct timespec vartime = timer_start();
 
-    /* Mandlebrot variables */
+    /* Mandelbrot variables */
     int *ks;
     ks = (int *)malloc((X_RESN*Y_RESN) * sizeof(int));
 
@@ -325,7 +363,7 @@ int main(int argc, char *argv[])
     {
         int height = Y_RESN;
         int width = X_RESN;
-        unsigned char image[height][width][BYTES_PER_PIXEL];
+        unsigned char *image = malloc(height*width*BYTES_PER_PIXEL*sizeof(char));
         char *imageFileName = (char *)"mandelbrot.bmp";
 
         int i, j, k;
@@ -344,24 +382,23 @@ int main(int argc, char *argv[])
                 c.g = 0.8;
                 c.b = 0;
                 unsigned long lc = k == MAX_ITER ? _RGB(colormap2(sin(d))) : _RGB(colormap1(k/(double)MAX_ITER));
-                image[i][j][2] = (unsigned char)(lc >>  0); //red
-                image[i][j][1] = (unsigned char)(lc >>  8); //green
-                image[i][j][0] = (unsigned char)(lc >> 16); //blue
+                image[(i*width + j)*BYTES_PER_PIXEL + 0] = (unsigned char)(lc >>  0); //blue
+                image[(i*width + j)*BYTES_PER_PIXEL + 1] = (unsigned char)(lc >>  8); //green
+                image[(i*width + j)*BYTES_PER_PIXEL + 2] = (unsigned char)(lc >> 16); //red
             }
         }
 
         generateBitmapImage((unsigned char *)image, height, width, imageFileName);
-        printf("Image generated!!");
 
-        free(ks);
-        free(ds);
-
-        long time_elapsed_nanos = timer_end(vartime);
-        double elapsed = time_elapsed_nanos*0.000000001;
-        printf("%lf\n", elapsed);
-
-        sleep(30);
+        free(image);
     }
+
+    free(ks);
+    free(ds);
+
+    long long time_elapsed_nanos = timer_end(vartime);
+    double elapsed = time_elapsed_nanos*0.000000001;
+    printf("%lf\n", elapsed);
 
     /* Program Finished */
     return 0;

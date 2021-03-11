@@ -38,10 +38,9 @@ int main(int argc, char *argv[]) { /* acc_calcpi.c  */
     pi *= 4.0/(N + 1);
 
     long long time_elapsed_nanos = timer_end(vartime);
-    printf("%lld\n", time_elapsed_nanos);
     double elapsed = time_elapsed_nanos*0.000000001;
     printf("%lf\n", elapsed);
 
-    printf("O valor de pi é: %.12f\n",pi);
+    // printf("O valor de pi é: %.12f\n",pi);
     return(0);
 }
