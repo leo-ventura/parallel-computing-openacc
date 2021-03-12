@@ -53,3 +53,5 @@ dkms.conf
 
 # Binaries
 bin
+xydata
+/output/

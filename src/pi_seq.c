@@ -27,7 +27,6 @@ int main(int argc, char *argv[]) { /* acc_calcpi.c  */
 
     struct timespec vartime = timer_start();
 
-    #pragma acc parallel loop copy(pi) reduction(+:pi)
     for (long long i = 0; i < N + 1; i++) {
         double t = (double)i/N;
         pi += 1.0/(1.0 + t*t);

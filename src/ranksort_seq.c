@@ -30,19 +30,21 @@ int* gen_random_unsorted_array(int n) {
     return fisher_yates_shuffle(random_array, n);
 }
 
+int find_rank(int* array, int n, int x) {
+    int rank = 0;
+    for(int i = 0; i < n; i++)
+        if(array[i] < x)
+            rank++;
+
+    return rank;
+}
+
 int* ranksort(int* array, int n) {
     int* sorted_array = malloc(sizeof(int) * n);
-        int value;
-        int rank;
 
-#pragma acc parallel loop copyin(array[:],n) copyout(sorted_array[:]) private(value,rank)
     for(int i = 0; i < n; i++) {
-        value = array[i];
-        rank = 0;
-        for(int j = 0; j < n; j++)
-            if(array[j] < value)
-                rank++;
-
+        int value = array[i];
+        int rank = find_rank(array, n, value);
         sorted_array[rank] = value;
     }
     return sorted_array;
