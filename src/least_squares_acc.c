@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     SUMxy = 0;
     SUMxx = 0;
     
-#pragma acc parallel loop redunction(+:slope, +:y_intercept)
+#pragma acc parallel loop reduction(+:slope, +:y_intercept)
     for (j = 0; j < n; j++) {
         SUMx = SUMx + x[j];
         SUMy = SUMy + y[j];
