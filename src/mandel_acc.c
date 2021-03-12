@@ -326,7 +326,8 @@ int main(int argc, char *argv[])
 
     /* Calculate and draw points */
     #pragma acc parallel loop \
-        copyout(ks[0:X_RESN*Y_RESN], ds[0:X_RESN*Y_RESN])
+        copyout(ks[0:X_RESN*Y_RESN], ds[0:X_RESN*Y_RESN]) \
+        private(k, d, c, z, t)
     for (int it = 0; it < X_RESN*Y_RESN; it++)
     {
         int i = it / Y_RESN;
@@ -347,7 +348,7 @@ int main(int argc, char *argv[])
 
         double lengthsq, temp;
         do
-        { /* iterate for pixel color */
+        {
             t = z;
             z.imag = 2.0 * t.real * t.imag + c.imag;
             z.real = t.real * t.real - t.imag * t.imag + c.real;
