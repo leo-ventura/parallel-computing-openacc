@@ -29,16 +29,16 @@ int main(int argc, char **argv) {
     SUMxy = 0;
     SUMxx = 0;
     
-#pragma acc parallel loop reduction(+:slope, +:y_intercept)
+#pragma acc parallel loop reduction(+:SUMx) reduction(+:SUMy) reduction(+:SUMxy) reduction(+:SUMxx)
     for (j = 0; j < n; j++) {
         SUMx = SUMx + x[j];
         SUMy = SUMy + y[j];
         SUMxy = SUMxy + x[j] * y[j];
         SUMxx = SUMxx + x[j] * x[j];
-        slope = (SUMx * SUMy - n * SUMxy) / (SUMx * SUMx - n * SUMxx);
-        y_intercept = (SUMy - slope * SUMx) / n;
     }
 
+    slope = (SUMx * SUMy - n * SUMxy) / (SUMx * SUMx - n * SUMxx);
+    y_intercept = (SUMy - slope * SUMx) / n;
 
     SUMres = 0;
     for (i = 0; i < n; i++) {
