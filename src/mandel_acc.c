@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <omp.h>
 #include <time.h>
 
 int X_RESN = 1000; /* x resolution */
