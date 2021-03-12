@@ -4,9 +4,9 @@
 #include <math.h>
 #include <time.h>
 
-#define X_RESN 1000 /* x resolution */
-#define Y_RESN 1000 /* y resolution */
-#define MAX_ITER 200
+int X_RESN = 1000; /* x resolution */
+int Y_RESN = 1000; /* y resolution */
+int MAX_ITER = 200;
 
 
 
@@ -39,6 +39,31 @@ typedef struct complextype {
 
 int main(int argc, char *argv[])
 {
+    int save = 0;
+    int s = 0;
+    for (int itA = 1; itA < argc; itA++) {
+        char *arg = argv[itA];
+        if (s == 0) {
+            if (strcmp(arg, "-s") == 0) save = 1;
+            if (strcmp(arg, "-x") == 0) s = 1;
+            if (strcmp(arg, "-y") == 0) s = 2;
+            if (strcmp(arg, "-i") == 0) s = 3;
+            if (strcmp(arg, "-xy") == 0) s = 4;
+        }
+        else 
+        {
+            if (s == 1) X_RESN = atoi(arg);
+            if (s == 2) Y_RESN = atoi(arg);
+            if (s == 3) MAX_ITER = atoi(arg);
+            if (s == 4) X_RESN = Y_RESN = atoi(arg);
+            s = 0;
+        }
+    }
+    if (s != 0) {
+        fprintf(stderr, "Missing argument value!");
+        exit(1);
+    }
+
     struct timespec vartime = timer_start();
 
     /* Mandelbrot variables */
