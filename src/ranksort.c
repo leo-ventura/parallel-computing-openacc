@@ -23,8 +23,6 @@ int* fisher_yates_shuffle(int* random_array, int n) {
 
 int* gen_random_unsorted_array(int n) {
     int* random_array = malloc(sizeof(int) * n);
-    // taken behaves as a hash table
-    // where the key is the index
     for (int i = 0; i < n; i++)
         random_array[i] = i;
 
