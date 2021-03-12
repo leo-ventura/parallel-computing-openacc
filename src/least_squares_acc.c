@@ -41,6 +41,7 @@ int main(int argc, char **argv) {
     y_intercept = (SUMy - slope * SUMx) / n;
 
     SUMres = 0;
+#pragma acc parallel loop reduction(+:SUMres)
     for (i = 0; i < n; i++) {
         y_estimate = slope * x[i] + y_intercept;
         res = y[i] - y_estimate;
