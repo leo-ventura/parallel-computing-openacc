@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
@@ -28,8 +27,8 @@ int main(int argc, char **argv) {
     SUMy = 0;
     SUMxy = 0;
     SUMxx = 0;
-    
-#pragma acc parallel loop reduction(+:SUMx) reduction(+:SUMy) reduction(+:SUMxy) reduction(+:SUMxx)
+
+#pragma acc parallel loop copyin(x[0:n], y[0:n]) reduction(+:SUMx, SUMy, SUMxy, SUMxx)
     for (j = 0; j < n; j++) {
         SUMx = SUMx + x[j];
         SUMy = SUMy + y[j];
@@ -41,7 +40,7 @@ int main(int argc, char **argv) {
     y_intercept = (SUMy - slope * SUMx) / n;
 
     SUMres = 0;
-#pragma acc parallel loop reduction(+:SUMres)
+#pragma acc parallel loop copyin(x[0:n], y[0:n]) reduction(+:SUMres)
     for (i = 0; i < n; i++) {
         y_estimate = slope * x[i] + y_intercept;
         res = y[i] - y_estimate;
@@ -52,7 +51,7 @@ int main(int argc, char **argv) {
 
     printf("Equation: y = %6.2lfx + %6.2lf\t", slope, y_intercept);
     printf("Residual sum = %6.2lf\t", SUMres);
-    printf("Original version. \tn = %d. \tTime elapsed proccesses: %1.6f\n", n, time_end - time_start);
-    
+    printf("ACC version. \tn = %d. \t\tTime elapsed proccesses: %1.6f\n", n, time_end - time_start);
+
     return 0;
 }
