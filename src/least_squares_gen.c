@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#define MAX_ABS_EPSILON 0.0
+#define MAX_ABS_EPSILON 2.0
 #define MAX_ABS_COEFF 100.0
 
 double random_in_range(double max_abs) {
@@ -19,6 +19,8 @@ int main(int argc, char *argv[]) {
     int n, i;
     FILE *out_file;
     
+    srand(time(NULL));
+
 	if (argc < 2) {
         printf("Entre com o valor de n.\n");
         return 1;

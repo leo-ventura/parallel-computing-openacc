@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 
     printf("Equation: y = %6.2lfx + %6.2lf\t", slope, y_intercept);
     printf("Residual sum = %6.2lf\t", SUMres);
-    printf("Original version. \tn = %d. \tTime elapsed proccesses: %1.3f\n", n, time_end - time_start);
+    printf("Original version. \tn = %d. \tTime elapsed proccesses: %1.6f\n", n, time_end - time_start);
     
     return 0;
 }
