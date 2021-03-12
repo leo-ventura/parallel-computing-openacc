@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <omp.h>
 #include <time.h>
 
 // ref: https://stackoverflow.com/questions/6749621/how-to-create-a-high-resolution-timer-in-linux-to-measure-program-performance
@@ -28,7 +27,7 @@ int main(int argc, char *argv[]) { /* acc_calcpi.c  */
 
     struct timespec vartime = timer_start();
 
-    #pragma acc parallel loop copy(pi) reduction(+: pi)
+    #pragma acc parallel loop copy(pi) reduction(+:pi)
     for (long long i = 0; i < N + 1; i++) {
         double t = (double)i/N;
         pi += 1.0/(1.0 + t*t);

@@ -358,6 +358,7 @@ int main(int argc, char *argv[])
         ds[it] = d;
     }
 
+    if (save)
     {
         int height = Y_RESN;
         int width = X_RESN;
