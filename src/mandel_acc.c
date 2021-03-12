@@ -325,29 +325,31 @@ int main(int argc, char *argv[])
     ds = (double *)malloc((X_RESN*Y_RESN) * sizeof(double));
 
     /* Calculate and draw points */
+    int i, j, k;
+    double d;
+    Compl z, c, t;
     #pragma acc parallel loop \
-        copyout(ks[0:X_RESN*Y_RESN], ds[0:X_RESN*Y_RESN])
+        copyout(ks[0:X_RESN*Y_RESN], ds[0:X_RESN*Y_RESN]) \
+        private(k, d, c, z, t)
     for (int it = 0; it < X_RESN*Y_RESN; it++)
     {
-        int i = it / Y_RESN;
-        int j = it % Y_RESN;
+        i = it / Y_RESN;
+        j = it % Y_RESN;
 
         // mandelbrot set is defined in the region of x = [-2, +2] and y = [-2, +2]
         double u = ((double)i - (X_RESN / 2.0)) / (X_RESN / 4.0);
         double v = ((double)j - (Y_RESN / 2.0)) / (Y_RESN / 4.0);
 
-        Compl z, c, t;
-
         z.real = z.imag = 0.0;
         c.real = v;
         c.imag = u;
 
-        int k = 0;
-        double d = 0.0;
+        k = 0;
+        d = 0.0;
 
-        double lengthsq, temp;
+        double lengthsq;
         do
-        { /* iterate for pixel color */
+        {
             t = z;
             z.imag = 2.0 * t.real * t.imag + c.imag;
             z.real = t.real * t.real - t.imag * t.imag + c.real;
@@ -366,12 +368,10 @@ int main(int argc, char *argv[])
         unsigned char *image = malloc(height*width*BYTES_PER_PIXEL*sizeof(char));
         char *imageFileName = (char *)"mandelbrot.bmp";
 
-        int i, j, k;
-        double d;
         for (int it_pixel = 0; it_pixel < (X_RESN * Y_RESN); it_pixel++)
         {
-            int i = it_pixel / Y_RESN;
-            int j = it_pixel % Y_RESN;
+            i = it_pixel / Y_RESN;
+            j = it_pixel % Y_RESN;
 
             k = ks[it_pixel];
             d = ds[it_pixel];
